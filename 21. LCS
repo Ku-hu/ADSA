@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to return the maximum of two integers
+int max(int a, int b) {
+    return (a > b) ? a : b; // if a > b return a else return b
+}
+
+int main() {
+    // Arrays to store the two input strings
+    char a1[100], a2[100];
+
+    // Input first string
+    printf("Enter the first string: ");
+    scanf("%s", a1);
+
+    // Input second string
+    printf("Enter the second string: ");
+    scanf("%s", a2);
+
+    // Display the strings entered
+    printf("\nTHE STRINGS YOU ENTERED:\n");
+    printf("First String: %s\n", a1);
+    printf("Second String: %s\n\n", a2);
+
+    // Find lengths of the two strings
+    int m = strlen(a1);
+    int n = strlen(a2);
+
+    printf("Length of string 1: %d\n", m);
+    printf("Length of string 2: %d\n\n", n);
+
+    // Create a 2D array (DP table) to store lengths of LCS of substrings
+    int dp[m + 1][n + 1];
+
+    // Fill the DP table
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0 || j == 0)
+                dp[i][j] = 0; // Base case: LCS of empty string with any string is 0
+            else if (a1[i - 1] == a2[j - 1])
+                dp[i][j] = dp[i - 1][j - 1] + 1; 
+                // If characters match, increase LCS length by 1 from previous diagonal cell
+            else
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]); 
+                // If characters don't match, take the maximum of left or top cell
+        }
+    }
+
+    // Length of LCS is in the bottom-right cell of DP table
+    int length = dp[m][n];
+    printf("The length of LCS is: %d\n", length);
+
+    // Array to store the LCS string
+    char lcs[length + 1]; // +1 for null terminator
+    lcs[length] = '\0';   // End of string
+
+    // Start from bottom-right of DP table to reconstruct the LCS
+    int i = m, j = n, index = length - 1;
+    while (i > 0 && j > 0) {
+        if (a1[i - 1] == a2[j - 1]) {
+            // If characters match, include it in LCS and move diagonally up-left
+            lcs[index--] = a1[i - 1];
+            i--;
+            j--;
+        } else if (dp[i - 1][j] > dp[i][j - 1])
+            i--; // Move up if top cell is greater
+        else
+            j--; // Move left if left cell is greater or equal
+    }
+
+    // Print the LCS
+    printf("The Longest Common Subsequence is: %s\n", lcs);
+
+    return 0;
+}
