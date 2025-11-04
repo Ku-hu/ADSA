@@ -1,0 +1,76 @@
+#include<stdio.h> 
+ 
+#define MAX_Items 100 
+#define MAX_Capacity 100 
+int dp[MAX_Items+1][MAX_Capacity+1]; 
+ 
+int findMax(int n1, int n2){ 
+   if(n1>n2) { 
+      return n1; 
+   } else { 
+      return n2; 
+   } 
+} 
+ 
+int knapsack(int W, int n, int value[], int weight[]) 
+{ 
+    for (int i=0;i<=n;i++) 
+        { 
+        for(int w=0;w<=W;w++) 
+        { 
+            if(i==0||w==0) 
+            { 
+                dp[i][w]=0; 
+            } 
+            else if(weight[i - 1] <= w) 
+            { 
+                dp[i][w]=findMax(value[i-1]+dp[i-1][w-weight[i-1]],dp[i-1][w]); 
+ 
+            } 
+            else 
+            { 
+                dp[i][w]=dp[i-1][w]; 
+            } 
+        } 
+    } 
+    return dp[n][W]; 
+ 
+} 
+ 
+void printDPTable(int n,int W) 
+{ 
+    printf("DP Table(rows=items,columns=capacities):\n"); 
+    for(int i = 0; i <= n; i++) 
+    { 
+        for(int w=0;w<=W;w++) 
+            { 
+            printf("%4d ",dp[i][w]); 
+        } 
+        printf("\n"); 
+    } 
+} 
+ 
+int main() 
+{ 
+    int n,W; 
+    int value[MAX_Items],weight[MAX_Items]; 
+ 
+    printf("Enter the number of items: "); 
+    scanf("%d",&n); 
+ 
+    printf("Enter the capacity: "); 
+    scanf("%d",&W); 
+ 
+    printf("Enter the value and weights for each item: \n"); 
+    for(int i=0;i<n;i++){ 
+        scanf("%d %d",&value[i],&weight[i]); 
+    } 
+ 
+    int maxValue = knapsack(W,n,value,weight); 
+    printf("The profit is: %d\n",maxValue); 
+ 
+    printDPTable(n,W); 
+ 
+    return 0; 
+ 
+}
