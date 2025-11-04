@@ -1,0 +1,56 @@
+#include<stdio.h> 
+#include<stdbool.h> 
+#define MAX 100 
+int board[MAX]; 
+int n; 
+ 
+int main() 
+{ 
+    printf("Enter the number of n: "); 
+    scanf("%d",&n); 
+    if(n<1||n>MAX){ 
+            printf("Invalid size"); 
+            return 0; 
+    } 
+ 
+    printf("Solution for %d-Queen Problems: \n\n", n); 
+    solve(0); 
+    return 0; 
+} 
+
+void printSolution(){ 
+    for(int i=0;i<n;i++){ 
+        for(int j=0;j<n;j++){ 
+            if(board[i]==j){ 
+                printf("Q "); 
+            } 
+            else{ 
+                printf("."); 
+            } 
+        } printf("\n"); 
+    } printf("\n"); 
+} 
+ 
+bool isSafe(int r, int c){ 
+    for (int i = 0; i < r; i++){ 
+        if(board[i] == c) 
+            return false; 
+        if(abs(board[i] - c) == abs(i - r)) 
+            return false; 
+    } 
+    return true; 
+} 
+ 
+void solve(int r) {  
+    if(r==n){ 
+        printSolution(); 
+        return; 
+    } 
+ 
+    for(int c=0;c<n;c++){ 
+        if(isSafe(r,c)){ 
+            board[r]=c; 
+            solve(r+1); 
+        } 
+    } 
+} 
