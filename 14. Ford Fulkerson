@@ -1,0 +1,69 @@
+#include <stdio.h> 
+#include <string.h> 
+#include <limits.h> 
+ 
+#define V 100 
+ 
+int graph[V][V];  
+int visited[V]; 
+int n; 
+ 
+int dfs(int u, int t, int flow) { 
+    if (u == t) 
+        return flow; 
+ 
+    visited[u] = 1; 
+ 
+    for (int v = 0; v < n; v++) { 
+        if (!visited[v] && graph[u][v] > 0) { 
+            int curr_flow = (flow < graph[u][v]) ? flow : graph[u][v]; 
+            int temp_flow = dfs(v, t, curr_flow); 
+ 
+            if (temp_flow > 0) { 
+                graph[u][v] -= temp_flow; 
+                graph[v][u] += temp_flow; 
+                return temp_flow; 
+            } 
+        } 
+    } 
+    return 0; 
+} 
+ 
+int fordFulkerson(int source, int sink) { 
+    int max_flow = 0; 
+    int flow; 
+ 
+    while (1) { 
+        memset(visited, 0, sizeof(visited)); 
+        flow = dfs(source, sink, INT_MAX); 
+ 
+        if (flow == 0) 
+            break; 
+ 
+        max_flow += flow; 
+    } 
+ 
+    return max_flow; 
+} 
+ 
+int main() { 
+    int source, sink; 
+ 
+    printf("Enter number of vertices: "); 
+    scanf("%d", &n); 
+ 
+    printf("Enter capacity matrix (%d x %d):\n", n, n); 
+    for (int i = 0; i < n; i++) 
+        for (int j = 0; j < n; j++) 
+            scanf("%d", &graph[i][j]); 
+ 
+    printf("Enter source vertex (0 to %d): ", n - 1); 
+    scanf("%d", &source); 
+    printf("Enter sink vertex (0 to %d): ", n - 1); 
+    scanf("%d", &sink); 
+ 
+    int maxFlow = fordFulkerson(source, sink); 
+    printf("Maximum flow: %d\n", maxFlow); 
+ 
+    return 0; 
+}
